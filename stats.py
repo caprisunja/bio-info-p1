@@ -161,9 +161,6 @@ def differential_expression(
 
 print("end")
 
-
-
-
 # -----------------------------
 # Main: load data + run analyses
 # -----------------------------
@@ -209,6 +206,40 @@ if __name__ == "__main__":
         de_by_region[r].to_csv(f"DE_{safe_name}.csv", index=False) '''
 
     print("\nDone. Files saved: DE_whole_brain.csv and DE_<region>.csv")
+
+
+from pathlib import Path
+
+import pandas as pd
+
+def clean_gene_list(path: str, data: pd.DataFrame) -> set:
+    # Lees bestand
+    raw = pd.read_csv(path, header=None, names=["gene"])
+
+    # Opschonen
+    raw["gene"] = raw["gene"].astype(str).str.strip()
+    raw = raw[raw["gene"] != ""]
+    raw["gene_clean"] = raw["gene"].str.upper()
+
+    # Duplicaten verwijderen
+    raw = raw.drop_duplicates(subset=["gene_clean"])
+
+    # Dataset genen uppercase
+    data_genes = set(data.index.astype(str).str.upper())
+
+    # Alleen genen behouden die in data zitten
+    present = raw[raw["gene_clean"].isin(data_genes)].copy()
+
+    
+    #print(f"Totaal uniek in originele lijst: {len(raw)}")
+    #print(f"Overgebleven (in dataset): {len(present)}")
+
+    # Set voor volcano highlighting
+    return set(present["gene_clean"].tolist())
+
+immune_genes = clean_gene_list(
+    "genes.txt", data
+)
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -272,5 +303,5 @@ def volcano_plot(
 
 volcano_plot(de_all, title="Whole brain: AD vs Healthy", fc_thresh=1.0, fdr_thresh=0.05)
 
-for r, df in de_by_region.items():
-    volcano_plot(df, title=f"{r}: AD vs Healthy", fc_thresh=1.0, fdr_thresh=0.05)
+#for r, df in de_by_region.items():
+    #volcano_plot(df, title=f"{r}: AD vs Healthy", fc_thresh=1.0, fdr_thresh=0.05)

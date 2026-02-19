@@ -129,10 +129,10 @@ top5_hippo = (
 
 #print(top5_hippo)
 
-metadata["brainRegion"].unique()
 
 
-#print(top5)
+
+print(top5)
 
 #statistiek en cijfers over aantal samples per groep en brain region
 #print(stats_group["group"].value_counts())
