@@ -101,7 +101,7 @@ top5 = (
     wide.sort_values("abs_difference", ascending=False)
         .head(5)
 )
-top5
+
 
 
 # Maak wide tabel per gene, met kolommen voor elke groep, maar nu alleen voor de hippocampus
@@ -127,7 +127,9 @@ top5_hippo = (
         .head(5)
 )
 
-print(top5_hippo)
+#print(top5_hippo)
+
+metadata["brainRegion"].unique()
 
 
 #print(top5)
